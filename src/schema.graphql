@@ -1,0 +1,19 @@
+# import * from './generated/prisma.graphql'
+
+type Mutation {
+    createUser(name: String!, slackToken: String!): User
+    createPage(name: String!, categoryId: ID!, userId: ID!, index: Int!): Page
+    createCategory(name: String!, emoji: String, index: Int!): Category
+}
+
+type Query {
+  pages(where: PageWhereInput, orderBy: PageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Page]!
+  categories(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Category]!
+  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
+  page(where: PageWhereUniqueInput!): Page
+  category(where: CategoryWhereUniqueInput!): Category
+  user(where: UserWhereUniqueInput!): User
+  pagesConnection(where: PageWhereInput, orderBy: PageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PageConnection!
+  categoriesConnection(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CategoryConnection!
+  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+}
