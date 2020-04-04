@@ -1,5 +1,5 @@
 # source: https://us1.prisma.sh/hacklahoma/wiki/dev
-# timestamp: Sat Apr 04 2020 01:20:20 GMT-0500 (Central Daylight Time)
+# timestamp: Sat Apr 04 2020 02:35:07 GMT-0500 (Central Daylight Time)
 
 type AggregateCategory {
   count: Int!
@@ -21,6 +21,7 @@ type BatchPayload {
 type Category implements Node {
   id: ID!
   name: String!
+  serializedName: String!
   emoji: String
   index: Int!
   pages(where: PageWhereInput, orderBy: PageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Page!]
@@ -39,6 +40,7 @@ type CategoryConnection {
 input CategoryCreateInput {
   id: ID
   name: String!
+  serializedName: String!
   emoji: String
   index: Int!
   pages: PageCreateManyWithoutCategoryInput
@@ -52,6 +54,7 @@ input CategoryCreateOneWithoutPagesInput {
 input CategoryCreateWithoutPagesInput {
   id: ID
   name: String!
+  serializedName: String!
   emoji: String
   index: Int!
 }
@@ -70,6 +73,8 @@ enum CategoryOrderByInput {
   id_DESC
   name_ASC
   name_DESC
+  serializedName_ASC
+  serializedName_DESC
   emoji_ASC
   emoji_DESC
   index_ASC
@@ -79,6 +84,7 @@ enum CategoryOrderByInput {
 type CategoryPreviousValues {
   id: ID!
   name: String!
+  serializedName: String!
   emoji: String
   index: Int!
 }
@@ -100,9 +106,7 @@ input CategorySubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [CategorySubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -124,6 +128,7 @@ input CategorySubscriptionWhereInput {
 
 input CategoryUpdateInput {
   name: String
+  serializedName: String
   emoji: String
   index: Int
   pages: PageUpdateManyWithoutCategoryInput
@@ -131,6 +136,7 @@ input CategoryUpdateInput {
 
 input CategoryUpdateManyMutationInput {
   name: String
+  serializedName: String
   emoji: String
   index: Int
 }
@@ -144,6 +150,7 @@ input CategoryUpdateOneRequiredWithoutPagesInput {
 
 input CategoryUpdateWithoutPagesDataInput {
   name: String
+  serializedName: String
   emoji: String
   index: Int
 }
@@ -242,6 +249,46 @@ input CategoryWhereInput {
 
   """All values not ending with the given string."""
   name_not_ends_with: String
+  serializedName: String
+
+  """All values that are not equal to given value."""
+  serializedName_not: String
+
+  """All values that are contained in given list."""
+  serializedName_in: [String!]
+
+  """All values that are not contained in given list."""
+  serializedName_not_in: [String!]
+
+  """All values less than the given value."""
+  serializedName_lt: String
+
+  """All values less than or equal the given value."""
+  serializedName_lte: String
+
+  """All values greater than the given value."""
+  serializedName_gt: String
+
+  """All values greater than or equal the given value."""
+  serializedName_gte: String
+
+  """All values containing the given string."""
+  serializedName_contains: String
+
+  """All values not containing the given string."""
+  serializedName_not_contains: String
+
+  """All values starting with the given string."""
+  serializedName_starts_with: String
+
+  """All values not starting with the given string."""
+  serializedName_not_starts_with: String
+
+  """All values ending with the given string."""
+  serializedName_ends_with: String
+
+  """All values not ending with the given string."""
+  serializedName_not_ends_with: String
   emoji: String
 
   """All values that are not equal to given value."""
@@ -311,6 +358,8 @@ input CategoryWhereInput {
 
 input CategoryWhereUniqueInput {
   id: ID
+  name: String
+  serializedName: String
 }
 
 scalar DateTime
@@ -357,6 +406,7 @@ interface Node {
 type Page implements Node {
   id: ID!
   name: String!
+  serializedName: String!
   data: String
   category: Category!
   status: Status!
@@ -381,6 +431,7 @@ type PageConnection {
 input PageCreateInput {
   id: ID
   name: String!
+  serializedName: String!
   data: String
   status: Status
   index: Int!
@@ -398,6 +449,7 @@ input PageCreateManyWithoutCategoryInput {
 input PageCreateWithoutCategoryInput {
   id: ID
   name: String!
+  serializedName: String!
   data: String
   status: Status
   index: Int!
@@ -435,6 +487,8 @@ enum PageOrderByInput {
   id_DESC
   name_ASC
   name_DESC
+  serializedName_ASC
+  serializedName_DESC
   data_ASC
   data_DESC
   status_ASC
@@ -452,6 +506,7 @@ enum PageOrderByInput {
 type PagePreviousValues {
   id: ID!
   name: String!
+  serializedName: String!
   data: String
   status: Status!
   index: Int!
@@ -549,6 +604,46 @@ input PageScalarWhereInput {
 
   """All values not ending with the given string."""
   name_not_ends_with: String
+  serializedName: String
+
+  """All values that are not equal to given value."""
+  serializedName_not: String
+
+  """All values that are contained in given list."""
+  serializedName_in: [String!]
+
+  """All values that are not contained in given list."""
+  serializedName_not_in: [String!]
+
+  """All values less than the given value."""
+  serializedName_lt: String
+
+  """All values less than or equal the given value."""
+  serializedName_lte: String
+
+  """All values greater than the given value."""
+  serializedName_gt: String
+
+  """All values greater than or equal the given value."""
+  serializedName_gte: String
+
+  """All values containing the given string."""
+  serializedName_contains: String
+
+  """All values not containing the given string."""
+  serializedName_not_contains: String
+
+  """All values starting with the given string."""
+  serializedName_starts_with: String
+
+  """All values not starting with the given string."""
+  serializedName_not_starts_with: String
+
+  """All values ending with the given string."""
+  serializedName_ends_with: String
+
+  """All values not ending with the given string."""
+  serializedName_not_ends_with: String
   data: String
 
   """All values that are not equal to given value."""
@@ -688,9 +783,7 @@ input PageSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [PageSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -712,6 +805,7 @@ input PageSubscriptionWhereInput {
 
 input PageUpdateInput {
   name: String
+  serializedName: String
   data: String
   status: Status
   index: Int
@@ -723,6 +817,7 @@ input PageUpdateInput {
 
 input PageUpdateManyDataInput {
   name: String
+  serializedName: String
   data: String
   status: Status
   index: Int
@@ -731,6 +826,7 @@ input PageUpdateManyDataInput {
 
 input PageUpdateManyMutationInput {
   name: String
+  serializedName: String
   data: String
   status: Status
   index: Int
@@ -756,6 +852,7 @@ input PageUpdateManyWithWhereNestedInput {
 
 input PageUpdateWithoutCategoryDataInput {
   name: String
+  serializedName: String
   data: String
   status: Status
   index: Int
@@ -864,6 +961,46 @@ input PageWhereInput {
 
   """All values not ending with the given string."""
   name_not_ends_with: String
+  serializedName: String
+
+  """All values that are not equal to given value."""
+  serializedName_not: String
+
+  """All values that are contained in given list."""
+  serializedName_in: [String!]
+
+  """All values that are not contained in given list."""
+  serializedName_not_in: [String!]
+
+  """All values less than the given value."""
+  serializedName_lt: String
+
+  """All values less than or equal the given value."""
+  serializedName_lte: String
+
+  """All values greater than the given value."""
+  serializedName_gt: String
+
+  """All values greater than or equal the given value."""
+  serializedName_gte: String
+
+  """All values containing the given string."""
+  serializedName_contains: String
+
+  """All values not containing the given string."""
+  serializedName_not_contains: String
+
+  """All values starting with the given string."""
+  serializedName_starts_with: String
+
+  """All values not starting with the given string."""
+  serializedName_not_starts_with: String
+
+  """All values ending with the given string."""
+  serializedName_ends_with: String
+
+  """All values not ending with the given string."""
+  serializedName_not_ends_with: String
   data: String
 
   """All values that are not equal to given value."""
@@ -991,6 +1128,8 @@ input PageWhereInput {
 
 input PageWhereUniqueInput {
   id: ID
+  name: String
+  serializedName: String
 }
 
 type Query {
@@ -1096,9 +1235,7 @@ input UserSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [UserSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
