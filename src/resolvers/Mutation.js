@@ -16,61 +16,6 @@ const Mutation = {
         );
         return user;
     },
-    // Creates a new page
-    async createPage(parent, args, ctx, info) {
-        var lastPage = await ctx.db.query.pages({
-            where: {
-                category: {
-                    id: args.categoryId,
-                },
-            },
-            orderBy: "index_ASC",
-            last: 1,
-        });
-        var index = JSON.parse(JSON.stringify(lastPage))[0].index + 1;
-
-        // If user did not mention a category
-        if (!args.categoryId) {
-            // getting miscellaneous category
-            var miscExists = await ctx.db.query.category({
-                where: {
-                    serializedName: "miscellaneous",
-                },
-            });
-            // if miscellaneous category does not exist
-            if (!miscExists) {
-                // create it
-                await ctx.db.mutation.createCategory({
-                    name: "Miscellaneous",
-                });
-            }
-            categoryId = "miscellaneous";
-        } else {
-            categoryId = args.categoryId;
-        }
-
-        var page = await ctx.db.mutation.createPage(
-            {
-                data: {
-                    index: index,
-                    name: args.name,
-                    serializedName: serializeName(args.name),
-                    createdBy: {
-                        connect: {
-                            id: args.userId,
-                        },
-                    },
-                    category: {
-                        connect: {
-                            id: categoryId,
-                        },
-                    },
-                },
-            },
-            info
-        );
-        return page;
-    },
     // Creates a new category
     async createCategory(parent, args, ctx, info) {
         // Setting to last index if name is miscellaneous
@@ -80,8 +25,11 @@ const Mutation = {
                 last: 1,
             });
             categories = JSON.parse(JSON.stringify(categories));
-            var index = categories[0].index + 1;
-        // Name is not miscellaneous
+            var index = 0;
+            if (categories.length !== 0) {
+                index = categories[0].index + 1;
+            }
+            // Name is not miscellaneous
         } else {
             // Getting categories and increasing index by 1 to make room
             var categories = await ctx.db.query.categories({
@@ -111,6 +59,81 @@ const Mutation = {
             info
         );
         return category;
+    },
+    // Creates a new page
+    async createPage(parent, args, ctx, info) {
+        var lastPage = await ctx.db.query.pages({
+            where: {
+                category: {
+                    id: args.categoryId,
+                },
+            },
+            orderBy: "index_ASC",
+            last: 1,
+        });
+        if (lastPage.length === 0) {
+            var index = 0;
+        } else {
+            var index = JSON.parse(JSON.stringify(lastPage))[0].index + 1;
+        }
+
+        // If user did not mention a category
+        if (!args.categoryId) {
+            // getting miscellaneous category
+            var misc = await ctx.db.query.category({
+                where: {
+                    serializedName: "miscellaneous",
+                },
+            });
+            // if miscellaneous category does not exist
+            if (!misc) {
+                // create it
+                var categories = await ctx.db.query.categories({
+                    orderBy: "index_ASC",
+                    last: 1,
+                });
+                categories = JSON.parse(JSON.stringify(categories));
+                var newIndex = 0;
+                if (categories.length !== 0) {
+                    newIndex = categories[0].index + 1;
+                }
+                misc = await ctx.db.mutation.createCategory(
+                    {
+                        data: {
+                            name: "Miscellaneous",
+                            serializedName: "miscellaneous",
+                            index: newIndex,
+                        },
+                    },
+                    info
+                );
+            }
+            var categoryId = misc.id;
+        } else {
+            var categoryId = args.categoryId;
+        }
+
+        var page = await ctx.db.mutation.createPage(
+            {
+                data: {
+                    index: index,
+                    name: args.name,
+                    serializedName: serializeName(args.name),
+                    createdBy: {
+                        connect: {
+                            id: args.userId,
+                        },
+                    },
+                    category: {
+                        connect: {
+                            id: categoryId,
+                        },
+                    },
+                },
+            },
+            info
+        );
+        return page;
     },
     // Deletes a new category
     async deleteCategory(parent, args, ctx, info) {
