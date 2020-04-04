@@ -2,8 +2,9 @@
 
 type Mutation {
     createUser(name: String!, slackToken: String!): User
-    createPage(name: String!, categoryId: ID!, userId: ID!, index: Int!): Page
-    createCategory(name: String!, emoji: String, index: Int!): Category
+    createPage(name: String!, categoryId: ID, userId: ID!): Page
+    createCategory(name: String!, emoji: String): Category
+    deleteCategory(categoryId: ID!): Category
 }
 
 type Query {

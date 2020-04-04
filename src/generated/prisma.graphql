@@ -1,5 +1,5 @@
 # source: https://us1.prisma.sh/hacklahoma/wiki/dev
-# timestamp: Thu Apr 02 2020 01:07:22 GMT-0500 (Central Daylight Time)
+# timestamp: Sat Apr 04 2020 01:20:20 GMT-0500 (Central Daylight Time)
 
 type AggregateCategory {
   count: Int!
@@ -311,7 +311,6 @@ input CategoryWhereInput {
 
 input CategoryWhereUniqueInput {
   id: ID
-  index: Int
 }
 
 scalar DateTime

@@ -23,7 +23,7 @@ type Category {
     id: ID! @id
     name: String!
     emoji: String
-    index: Int! @unique
+    index: Int!
     pages: [Page]
 }
 
