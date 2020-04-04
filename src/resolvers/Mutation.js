@@ -34,7 +34,7 @@ const Mutation = {
             // getting miscellaneous category
             var miscExists = await ctx.db.query.category({
                 where: {
-                    id: "miscellaneous",
+                    serializedName: "miscellaneous",
                 },
             });
             // if miscellaneous category does not exist
@@ -52,9 +52,9 @@ const Mutation = {
         var page = await ctx.db.mutation.createPage(
             {
                 data: {
-                    id: serializeName(args.name),
                     index: index,
                     name: args.name,
+                    serializedName: serializeName(args.name),
                     createdBy: {
                         connect: {
                             id: args.userId,
@@ -104,7 +104,7 @@ const Mutation = {
             {
                 data: {
                     ...args,
-                    id: serializeName(args.name),
+                    serializedName: serializeName(args.name),
                     index: index,
                 },
             },

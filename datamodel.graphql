@@ -7,7 +7,8 @@ type User {
 
 type Page {
     id: ID! @id
-    name: String!
+    name: String! @unique
+    serializedName: String! @unique
     data: String
     category: Category!
     status: Status! @default(value: INCOMPLETE)
@@ -21,7 +22,8 @@ type Page {
 
 type Category {
     id: ID! @id
-    name: String!
+    name: String! @unique
+    serializedName: String! @unique
     emoji: String
     index: Int!
     pages: [Page]
