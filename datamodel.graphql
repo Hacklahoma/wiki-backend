@@ -9,7 +9,7 @@ type Page {
     id: ID! @id
     name: String! @unique
     serializedName: String! @unique
-    data: String
+    content: String
     category: Category!
     status: Status! @default(value: INCOMPLETE)
     index: Int!
