@@ -3,6 +3,7 @@
 type Mutation {
     createUser(name: String!, slackToken: String!): User
     createPage(name: String!, categoryId: ID, userId: ID!): Page
+    editContent(pageSerial: String!, userId: ID!, content: String!): Page
     createCategory(name: String!, emoji: String): Category
     deleteCategory(categoryId: ID!): Category
 }

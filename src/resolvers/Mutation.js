@@ -1,6 +1,9 @@
 // Transforms "This Is a Name" to "this-is-a-name" for more friendly urls
 function serializeName(name) {
-    return name.trim().toLowerCase().replace(/ /g, "-");
+    return name
+        .trim()
+        .toLowerCase()
+        .replace(/ /g, "-");
 }
 
 const Mutation = {
@@ -44,8 +47,8 @@ const Mutation = {
                     },
                 });
             }
-        }   
-        
+        }
+
         var category = await ctx.db.mutation.createCategory(
             {
                 data: {
@@ -135,6 +138,17 @@ const Mutation = {
                         },
                     },
                 },
+            },
+            info
+        );
+        return page;
+    },
+    // Edits the content of a page
+    async editContent(parent, args, ctx, info) {
+        var page = await ctx.db.mutation.updatePage(
+            {
+                data: { content: args.content, modifiedBy: { connect: { id: args.userId } } },
+                where: { serializedName: args.pageSerial },
             },
             info
         );
