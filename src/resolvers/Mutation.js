@@ -183,6 +183,19 @@ const Mutation = {
         }
         return category;
     },
+    //Edits a category
+    async editCategory(parent, args, ctx, info) {
+        var category = await ctx.db.mutation.updateCategory(
+            {
+                data: { serializedName: args.name, name: args.name, emoji: args.emoji},
+                where: { serializedName: args.categorySerial },
+            },
+            info
+        );
+
+        return category;
+
+    },
 };
 
 module.exports = Mutation;
