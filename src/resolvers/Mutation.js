@@ -159,7 +159,7 @@ const Mutation = {
         var category = await ctx.db.mutation.deleteCategory(
             {
                 where: {
-                    ...args,
+                    serializedName: args.categorySerial
                 },
             },
             info
@@ -187,15 +187,43 @@ const Mutation = {
     async editCategory(parent, args, ctx, info) {
         var category = await ctx.db.mutation.updateCategory(
             {
-                data: { serializedName: args.name, name: args.name, emoji: args.emoji},
+                data: { serializedName: serializeName(args.name), name: args.name, emoji: args.emoji},
                 where: { serializedName: args.categorySerial },
             },
             info
         );
 
         return category;
-
     },
+    async moveCategory(parent, args, ctx, info) {
+        // Getting categories and updating the indexes after arg.index
+        var categories = await ctx.db.query.categories({
+            orderBy: "index_ASC",
+        });
+        categories = JSON.parse(JSON.stringify(categories));
+        for (i in categories) {
+            if(i > args.index){
+                ctx.db.mutation.updateCategory({
+                    where: {
+                        id: categories[i].id,
+                    },
+                    data: {
+                        index: i,
+                    },
+                });
+            }
+        }
+
+        var category = ctx.db.mutation.updateCategory({
+            where: {
+                serializedName: args.categorySerial
+            },
+            data: {
+                index: args.index,
+            },
+        })
+        return category;
+    }
 };
 
 module.exports = Mutation;

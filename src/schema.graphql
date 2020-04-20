@@ -5,8 +5,9 @@ type Mutation {
     createPage(name: String!, categoryId: ID, userId: ID!): Page
     editContent(pageSerial: String!, userId: ID!, content: String!): Page
     createCategory(name: String!, emoji: String): Category
-    deleteCategory(categoryId: ID!): Category
+    deleteCategory(categorySerial: String!): Category
     editCategory(categorySerial: String!, name: String!, emoji: String): Category
+    moveCategory(categorySerial: String!, index: Int!): Category
 }
 
 type Query {
