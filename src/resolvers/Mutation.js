@@ -31,24 +31,27 @@ const Mutation = {
             index = JSON.parse(JSON.stringify(index));
             index = index.aggregate.count;
             // Name is not miscellaneous
-        } else {
-            // Getting categories and increasing index by 1 to make room
+        } 
+        else {
+            // Get the categories in index order
             var categories = await ctx.db.query.categories({
                 orderBy: "index_ASC",
             });
             categories = JSON.parse(JSON.stringify(categories));
-            for (i in categories) {
-                ctx.db.mutation.updateCategory({
-                    where: {
-                        id: categories[i].id,
-                    },
-                    data: {
-                        index: categories[i].index + 1,
-                    },
-                });
-            }
+            //get index that the new category should be at
+            index = categories.length-1;
+            //Update the miscellaneous categories index
+            ctx.db.mutation.updateCategory({
+                where: {
+                    serializedName: "miscellaneous" 
+                },
+                data: {
+                    index: categories.length,
+                },
+            });
         }
 
+        //Create a new category with the new index and arguments
         var category = await ctx.db.mutation.createCategory(
             {
                 data: {
