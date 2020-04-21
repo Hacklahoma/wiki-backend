@@ -159,6 +159,7 @@ const Mutation = {
     },
     // Deletes a new category
     async deleteCategory(parent, args, ctx, info) {
+        //Delete the category based on the serial
         var category = await ctx.db.mutation.deleteCategory(
             {
                 where: {
@@ -168,26 +169,30 @@ const Mutation = {
             info
         );
 
+        //Gets the categories in index order
         var categories = await ctx.db.query.categories({
             orderBy: "index_ASC",
             first: category.index + 1,
         });
 
         categories = JSON.parse(JSON.stringify(categories));
+
+        //Updates the categories based on the new index
         for (i in categories) {
             ctx.db.mutation.updateCategory({
                 where: {
                     id: categories[i].id,
                 },
                 data: {
-                    index: categories[i].index - 1,
+                    index: i,
                 },
             });
         }
         return category;
     },
-    //Edits a category
+    //Edits a category based on a name
     async editCategory(parent, args, ctx, info) {
+        //Gets the category and updates it based on the new name
         var category = await ctx.db.mutation.updateCategory(
             {
                 data: { serializedName: serializeName(args.name), name: args.name, emoji: args.emoji},
@@ -198,25 +203,74 @@ const Mutation = {
 
         return category;
     },
+    //Move a category based on an index
     async moveCategory(parent, args, ctx, info) {
-        // Getting categories and updating the indexes after arg.index
+        //Gets the categories in index order
         var categories = await ctx.db.query.categories({
             orderBy: "index_ASC",
         });
         categories = JSON.parse(JSON.stringify(categories));
-        for (i in categories) {
-            if(i > args.index){
+
+        //First checks to see if the index is in the bounds
+        if(args.index >= categories.length-1 || args.index < 0){
+            return{
+                error:{
+                    id: "moveCategory",
+                    message: "Index Out Of Bound"
+                }
+            }
+        }
+
+        //Next check for the different cases there can be
+        //Grab the category
+        var categoryIndex = await ctx.db.query.category({
+            where:{
+                serializedName: args.categorySerial,
+            }
+        })
+
+        categoryIndex = JSON.parse(JSON.stringify(categoryIndex));
+        //Get the index from the category
+        categoryIndex = parseInt(categoryIndex.index);
+
+        //Checks to see if the index is the same
+        if(categoryIndex === args.index){
+            return{
+                error:{
+                    id: "moveCategory",
+                    message: "Index not being moved"
+                }
+            }
+        }
+        //Checks the last case where the new category index is lower
+        else if(args.index < categoryIndex){
+            //Make room for the category
+            for (i = args.index; i < categoryIndex; i++) {
                 ctx.db.mutation.updateCategory({
                     where: {
                         id: categories[i].id,
                     },
                     data: {
-                        index: i,
+                        index: categories[i].index + 1,
                     },
                 });
             }
         }
-
+        //Checks the last case where the new category index is bigger
+        else {
+            //Make room for the category to be moved
+            for (i = categoryIndex+1; i <= args.index; i++) {
+                ctx.db.mutation.updateCategory({
+                    where: {
+                        id: categories[i].id,
+                    },
+                    data: {
+                        index: categories[i].index - 1,
+                    },
+                });
+            }
+        }
+        //Update the category's index
         var category = ctx.db.mutation.updateCategory({
             where: {
                 serializedName: args.categorySerial
