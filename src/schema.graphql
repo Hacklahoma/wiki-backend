@@ -2,8 +2,12 @@
 
 type Mutation {
     createUser(name: String!, slackToken: String!): User
+    #Page Mutations
     createPage(name: String!, categoryId: ID, userId: ID!): Page
+    deletePage(pageSerial: String!): Page
     editContent(pageSerial: String!, userId: ID!, content: String!): Page
+    movePage(pageSerial: String!, index: Int!, categorySerial: String!): Page
+    #Category Mutations
     createCategory(name: String!, emoji: String): Category
     deleteCategory(categorySerial: String!): Category
     editCategory(categorySerial: String!, name: String!, emoji: String): Category

@@ -19,51 +19,11 @@ const Mutation = {
         );
         return user;
     },
-    // Creates a new category
-    async createCategory(parent, args, ctx, info) {
-        // Setting to last index if name is miscellaneous
-        var index = 0;
-        if (args.name.toLowerCase() === "miscellaneous") {
-            index = await ctx.db.query.categoriesConnection(
-                { where: {} },
-                "{ aggregate { count } }"
-            );
-            index = JSON.parse(JSON.stringify(index));
-            index = index.aggregate.count;
-            // Name is not miscellaneous
-        } 
-        else {
-            // Get the categories in index order
-            var categories = await ctx.db.query.categories({
-                orderBy: "index_ASC",
-            });
-            categories = JSON.parse(JSON.stringify(categories));
-            //get index that the new category should be at
-            index = categories.length-1;
-            //Update the miscellaneous categories index
-            ctx.db.mutation.updateCategory({
-                where: {
-                    serializedName: "miscellaneous" 
-                },
-                data: {
-                    index: categories.length,
-                },
-            });
-        }
 
-        //Create a new category with the new index and arguments
-        var category = await ctx.db.mutation.createCategory(
-            {
-                data: {
-                    ...args,
-                    serializedName: serializeName(args.name),
-                    index: index,
-                },
-            },
-            info
-        );
-        return category;
-    },
+    /**
+     * Page Mutations
+     */
+
     // Creates a new page
     async createPage(parent, args, ctx, info) {
         var index = 0;
@@ -146,6 +106,18 @@ const Mutation = {
         );
         return page;
     },
+    //Deletes the page
+    //Temporarily just making it completely get rid of it
+    async deletePage(parent, args, ctx, info) {
+        //Get the page
+        var page = await ctx.db.mutation.deletePage({
+            where:{
+                serializedName: args.pageSerial,
+            }
+        });
+
+        return page;
+    },
     // Edits the content of a page
     async editContent(parent, args, ctx, info) {
         var page = await ctx.db.mutation.updatePage(
@@ -156,6 +128,67 @@ const Mutation = {
             info
         );
         return page;
+    },
+    //Moves the page to a new index and/or category
+    async movePage(parent, args, ctx, info) {
+        var pageInfo = await ctx.db.query.page({
+            where:{
+                serializedName: args.pageSerial,
+            }
+        });
+        //pageInfo = JSON.stringify(pageInfo);
+
+        return pageInfo;
+    },
+
+    /**
+     * Category Mutations
+     */
+
+    // Creates a new category
+    async createCategory(parent, args, ctx, info) {
+        // Setting to last index if name is miscellaneous
+        var index = 0;
+        if (args.name.toLowerCase() === "miscellaneous") {
+            index = await ctx.db.query.categoriesConnection(
+                { where: {} },
+                "{ aggregate { count } }"
+            );
+            index = JSON.parse(JSON.stringify(index));
+            index = index.aggregate.count;
+            // Name is not miscellaneous
+        } 
+        else {
+            // Get the categories in index order
+            var categories = await ctx.db.query.categories({
+                orderBy: "index_ASC",
+            });
+            categories = JSON.parse(JSON.stringify(categories));
+            //get index that the new category should be at
+            index = categories.length-1;
+            //Update the miscellaneous categories index
+            ctx.db.mutation.updateCategory({
+                where: {
+                    serializedName: "miscellaneous" 
+                },
+                data: {
+                    index: categories.length,
+                },
+            });
+        }
+
+        //Create a new category with the new index and arguments
+        var category = await ctx.db.mutation.createCategory(
+            {
+                data: {
+                    ...args,
+                    serializedName: serializeName(args.name),
+                    index: index,
+                },
+            },
+            info
+        );
+        return category;
     },
     // Deletes a new category
     async deleteCategory(parent, args, ctx, info) {
